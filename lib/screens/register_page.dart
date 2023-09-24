@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:e_waste_app/components/text_field.dart';
 
-import '../components/text_field.dart';
+import '../models/user.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({
     super.key,
-    required this.tooglePages,
+    required this.onTap,
+    required this.setInputs,
+    required this.saveRegister,
   });
 
-  final Function()? tooglePages;
+  final Function()? onTap;
+  final void Function(String identifier, String input) setInputs;
+  final Future Function() saveRegister;
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -17,13 +22,15 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
+    // TODO: implement initState
     print("in register page init");
     super.initState();
   }
 
-  final emailTextController = TextEditingController();
+  User user = User();
+  final emailTextController = TextEditingController(text: null);
   final passwordTextController = TextEditingController();
-  // final reEnterPasswordTextController = TextEditingController();
+  final reEnterPasswordTextController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -59,23 +66,27 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     //email
                     MytextField(
-                      controller: emailTextController,
-                      hintText: "Email",
-                      obscureText: false,
-                    ),
+                        controller: emailTextController,
+                        hintText: "Email",
+                        obscureText: false,
+                        recordInput: widget.setInputs),
                     // pass
                     const SizedBox(
                       height: 10,
                     ),
                     MytextField(
-                      controller: passwordTextController,
-                      hintText: "Pass",
-                      obscureText: true,
-                    ),
+                        controller: passwordTextController,
+                        hintText: "Pass",
+                        obscureText: true,
+                        recordInput: widget.setInputs),
                     //sign
                     const SizedBox(
                       height: 10,
                     ),
+                    // MytextField(
+                    //     controller: reEnterPasswordTextController,
+                    //     hintText: "Confirm Password",
+                    //     obscureText: true),
                     const SizedBox(
                       height: 22,
                     ),
@@ -84,7 +95,11 @@ class _RegisterPageState extends State<RegisterPage> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.black),
-                        onPressed: () {},
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            widget.saveRegister();
+                          } else {}
+                        },
                         child: const Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: 108, vertical: 22),
@@ -114,7 +129,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           width: 4,
                         ),
                         GestureDetector(
-                          onTap: widget.tooglePages,
+                          onTap: widget.onTap,
                           child: const Text(
                             "Login now",
                             style: TextStyle(

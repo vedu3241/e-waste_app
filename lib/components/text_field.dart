@@ -7,16 +7,20 @@ class MytextField extends StatelessWidget {
     required this.controller,
     required this.hintText,
     required this.obscureText,
+    required this.recordInput,
   });
 
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
+  final void Function(String identifier, String input) recordInput;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      onChanged: (value) => {},
+      onChanged: (value) => {
+        recordInput(hintText, value),
+      },
       controller: controller,
       obscureText: obscureText,
       validator: (value) {

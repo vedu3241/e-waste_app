@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:e_waste_app/components/text_field.dart';
 
-import '../components/text_field.dart';
-
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({
+class LoginPage extends StatefulWidget {
+  const LoginPage({
     super.key,
-    required this.tooglePages,
+    required this.onTap,
+    required this.setInputs,
+    required this.saveLogin,
   });
 
-  final Function()? tooglePages;
-
+  final Function()? onTap;
+  final void Function(String identifier, String input) setInputs;
+  final Future Function() saveLogin;
   @override
-  State<LoginScreen> createState() {
-    return LoginScreenState();
+  State<LoginPage> createState() {
+    return LoginPageState();
   }
 }
 
-class LoginScreenState extends State<LoginScreen> {
+class LoginPageState extends State<LoginPage> {
   final passwordTextController = TextEditingController();
   final emailTextController = TextEditingController();
 
@@ -24,6 +26,7 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
+    // TODO: implement initState
     print("in login page init");
     super.initState();
   }
@@ -63,16 +66,17 @@ class LoginScreenState extends State<LoginScreen> {
                       controller: emailTextController,
                       hintText: "Email",
                       obscureText: false,
+                      recordInput: widget.setInputs,
                     ),
                     // pass
                     const SizedBox(
                       height: 10,
                     ),
                     MytextField(
-                      controller: passwordTextController,
-                      hintText: "Pass",
-                      obscureText: true,
-                    ),
+                        controller: passwordTextController,
+                        hintText: "Pass",
+                        obscureText: true,
+                        recordInput: widget.setInputs),
                     //sign
                     const SizedBox(
                       height: 25,
@@ -82,7 +86,14 @@ class LoginScreenState extends State<LoginScreen> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.black),
-                        onPressed: () {},
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            widget.saveLogin();
+                          } else {
+                            // ignore: avoid_print
+                            print("not ok");
+                          }
+                        },
                         child: const Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: 115, vertical: 20),
@@ -113,7 +124,7 @@ class LoginScreenState extends State<LoginScreen> {
                           width: 4,
                         ),
                         GestureDetector(
-                          onTap: widget.tooglePages,
+                          onTap: widget.onTap,
                           child: const Text(
                             "Register now",
                             style: TextStyle(
