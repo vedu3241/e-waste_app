@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:e_waste_app/screens/ReqFormToHub.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -124,7 +125,13 @@ class _MapScreenState extends State<MapScreen> {
                         Row(
                           children: [
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => const ReqFormToHub(),
+                                  ),
+                                );
+                              },
                               child: const Text("Next"),
                             ),
                             const Spacer(),

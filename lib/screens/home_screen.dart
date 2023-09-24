@@ -15,8 +15,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Home"),
-        backgroundColor: const Color.fromARGB(255, 133, 87, 211),
-        foregroundColor: Colors.white,
         actions: [
           InkWell(
             onTap: () async {
@@ -56,16 +54,23 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: Center(
-          child: ElevatedButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const MapScreen(),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("User id: ${widget.userId}"),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const MapScreen(),
+                  ),
+                );
+              },
+              child: const Text("Show map"),
             ),
-          );
-        },
-        child: Text(widget.userId),
-      )),
+          ],
+        ),
+      ),
     );
   }
 }
