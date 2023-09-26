@@ -31,7 +31,7 @@ class _LoginOrRegisterState extends State<LoginOrRegister> {
 
   Future saveLogin() async {
     var res = await http.post(
-      Uri.parse('http://192.168.0.103:8000/login'),
+      Uri.parse('http://192.168.107.157:8000/login'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

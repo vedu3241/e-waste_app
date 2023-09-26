@@ -1,13 +1,16 @@
 import 'dart:async';
 
-import 'package:e_waste_app/screens/ReqFormToHub.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 import '../dummyData/hubData.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  const MapScreen({super.key, required this.formData});
+  final Map<String, dynamic> formData;
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -15,6 +18,8 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   // 19.0513152, 72.9088000
+  BitmapDescriptor customMarkerIcon = BitmapDescriptor.defaultMarkerWithHue(
+      BitmapDescriptor.hueOrange); // Change 'hueBlue' to the desired hue value
 
   final Completer<GoogleMapController> _controller = Completer();
   final List<Marker> _markers = <Marker>[];
@@ -31,6 +36,16 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
+  Future<Position> getUserCurrentLocation() async {
+    await Geolocator.requestPermission()
+        .then((value) {})
+        .onError((error, stackTrace) {
+      print(error.toString());
+    });
+
+    return await Geolocator.getCurrentPosition();
+  }
+
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(19.0513152, 72.9088000),
     zoom: 14,
@@ -40,6 +55,7 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    //as per hubData making markers
     List<Marker> list = hubData.asMap().entries.map((entry) {
       final int index = entry.key;
       final Map<String, String> hub = entry.value;
@@ -56,25 +72,28 @@ class _MapScreenState extends State<MapScreen> {
         },
       );
     }).toList();
-
+    //List of markers set here to display
     _markers.addAll(list);
+    print(widget.formData);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Map Screen")),
+      backgroundColor: Colors.grey[300],
+
+      appBar: AppBar(title: const Text("Select Hub")),
       body: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: 20,
-            ),
-            child: Text(
-              "Select Hub",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-            ),
-          ),
+          // const Padding(
+          //   padding: EdgeInsets.symmetric(
+          //     vertical: 20,
+          //   ),
+          //   child: Text(
+          //     "Select Hub",
+          //     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+          //   ),
+          // ),
           Container(
             height: 450,
             width: double.infinity,
@@ -97,55 +116,71 @@ class _MapScreenState extends State<MapScreen> {
           isLocationSelected
               ? Card(
                   margin: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Container(
-                    width: double.infinity,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Hub Name: $selectedHubName",
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          "Hub Address: $selectedHubAddress",
-                          style: const TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Row(
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => const ReqFormToHub(),
-                                  ),
-                                );
-                              },
-                              child: const Text("Next"),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Container(
+                      width: double.infinity,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Hub Name: $selectedHubName",
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 16,
                             ),
-                            const Spacer(),
-                            ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  isLocationSelected = false;
-                                });
-                              },
-                              child: const Text("Cancel"),
-                            )
-                          ],
-                        )
-                      ],
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            "Hub Address: $selectedHubAddress",
+                            style: const TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Row(
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  // Navigator.of(context).push(
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => const ReqFormToHub(),
+                                  //   ),
+                                  // );
+                                  QuickAlert.show(
+                                    context: context,
+                                    // onConfirmBtnTap: () {},
+                                    type: QuickAlertType.success,
+                                    text: "Req sent",
+                                  );
+                                },
+                                child: const Text("Send request"),
+                              ),
+                              const Spacer(),
+                              ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all<
+                                          Color>(
+                                      const Color.fromARGB(255, 234, 88, 78)),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    isLocationSelected = false;
+                                  });
+                                },
+                                child: const Text(
+                                  "Cancel",
+                                ),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 )
@@ -154,6 +189,32 @@ class _MapScreenState extends State<MapScreen> {
                   style: TextStyle(fontSize: 16),
                 ),
         ],
+      ),
+      //Mark and change camera to user current location
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          getUserCurrentLocation().then((value) async {
+            _markers.add(
+              Marker(
+                markerId: const MarkerId('SomeId'),
+                icon: customMarkerIcon,
+                position: LatLng(value.latitude, value.longitude),
+                infoWindow: const InfoWindow(title: "My current location"),
+              ),
+            );
+            CameraPosition cameraPosition = CameraPosition(
+              zoom: 14,
+              target: LatLng(value.latitude, value.longitude),
+            );
+
+            final GoogleMapController controller = await _controller.future;
+            controller.animateCamera(
+              CameraUpdate.newCameraPosition(cameraPosition),
+            );
+            setState(() {});
+          });
+        },
+        child: const Icon(Icons.my_location),
       ),
     );
   }

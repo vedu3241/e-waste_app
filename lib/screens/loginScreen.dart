@@ -87,6 +87,7 @@ class LoginPageState extends State<LoginPage> {
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.black),
                         onPressed: () {
+                          print("login btn pressed");
                           if (_formKey.currentState!.validate()) {
                             widget.saveLogin();
                           } else {

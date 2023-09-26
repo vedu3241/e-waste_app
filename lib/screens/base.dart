@@ -1,7 +1,8 @@
+import 'package:e_waste_app/screens/newHomeScreen.dart';
+import 'package:e_waste_app/screens/tab_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:e_waste_app/auth/login_or_register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:e_waste_app/screens/home_screen.dart';
 
 var finalUserID = null;
 
@@ -46,7 +47,7 @@ class _Base extends State<Base> {
   Widget build(context) {
     Widget screenWidget = const LoginOrRegister();
     if (activeScreen == 'home-screen') {
-      screenWidget = HomeScreen(
+      screenWidget = TabsScreen(
         userId: finalUserID,
       );
     }

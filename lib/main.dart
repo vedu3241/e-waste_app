@@ -1,5 +1,6 @@
 import 'package:e_waste_app/auth/login_or_register.dart';
 import 'package:e_waste_app/screens/base.dart';
+import 'package:e_waste_app/screens/form_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
